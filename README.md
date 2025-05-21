@@ -14,6 +14,15 @@ $ npm install @nestjs/swagger
 $ npm install class-validator class-transformer
 ```
 
+## Database Setup
+
+```bash
+# Create PostgreSQL database
+CREATE DATABASE event_buddy;
+
+# .env file
+```
+
 ## Compile and run the project
 
 ```bash
@@ -26,15 +35,6 @@ $ npm run start:dev
 
 # development
 $ npm run start
-```
-
-## Database Setup
-
-```bash
-# Create PostgreSQL database
-CREATE DATABASE event_buddy;
-
-# .env file
 ```
 
 ## API Documentation
