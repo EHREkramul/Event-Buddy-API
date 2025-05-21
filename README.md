@@ -10,8 +10,8 @@ Ensure you have installed Node.js
 
 ```bash
 # Additional packages used
-$ npm install @nestjs/swagger
-$ npm install class-validator class-transformer
+npm install @nestjs/swagger
+npm install class-validator class-transformer
 ```
 
 ## Database Setup
@@ -27,14 +27,14 @@ CREATE DATABASE event_buddy;
 
 ```bash
 # Clone the repository
-$ git clone https://github.com/EHREkramul/Event-Buddy-API.git
-$ cd Event-Buddy-API
+git clone https://github.com/EHREkramul/Event-Buddy-API.git
+cd Event-Buddy-API
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # development
-$ npm run start
+npm run start
 ```
 
 ## API Documentation
