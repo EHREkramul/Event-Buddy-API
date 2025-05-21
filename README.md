@@ -6,17 +6,40 @@
 
 Ensure you have installed Node.js
 
-## Project setup
+## Installation Commands
 
 ```bash
-$ npm install
+# Additional packages used
+$ npm install @nestjs/swagger
+$ npm install class-validator class-transformer
 ```
 
 ## Compile and run the project
 
 ```bash
-# development
-$ npm run start
+# Clone the repository
+$ git clone https://github.com/EHREkramul/Event-Buddy-API.git
+$ cd Event-Buddy-API
 
 # watch mode
 $ npm run start:dev
+
+# development
+$ npm run start
+```
+
+## Database Setup
+
+```bash
+# Create PostgreSQL database
+CREATE DATABASE event_buddy;
+
+# .env file
+```
+
+## API Documentation
+
+```bash
+# View Swagger docs (Visit after starting the server)
+http://localhost:46570/api
+```
