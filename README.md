@@ -1,17 +1,21 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Event Buddy Backend API
+
+[![Nest Logo](https://nestjs.com/img/logo-small.svg)](http://nestjs.com/)
 
 ## Description
 
-Ensure you have installed Node.js
+Ensure you have installed NestJS
 
 ## Installation Commands
 
 ```bash
 # Additional packages used
 npm install @nestjs/swagger
-npm install class-validator class-transformer
+npm i --save class-validator class-transformer
+npm install --save @nestjs/typeorm typeorm pg
+npm install bcrypt
+npm install --save-dev @types/bcrypt
+npm i @nestjs/config
 ```
 
 ## Database Setup
@@ -21,6 +25,12 @@ npm install class-validator class-transformer
 CREATE DATABASE event_buddy;
 
 # .env file
+    # Database configuration
+    db_host=localhost
+    db_password=3639
+    db_name=event_buddy
+    db_port=5432
+    db_user=postgres
 ```
 
 ## Compile and run the project
@@ -42,4 +52,3 @@ npm run start
 ```bash
 # View Swagger docs (Visit after starting the server)
 http://localhost:46570/api
-```
