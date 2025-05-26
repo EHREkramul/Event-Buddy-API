@@ -52,7 +52,19 @@ export class EventsController {
   @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({
     description: 'The event has been successfully created.',
-    type: EventResponseDto,
+    schema: {
+      example: {
+        id: 17,
+        title: 'asdffasdfasd fadfasdfassdfsfd fssdfasd',
+        description: 'Tech entrepreneurs meetup in Banani',
+        eventStartDate: '2025-04-01T18:00:00Z',
+        eventEndDate: '2025-06-01T21:00:00Z',
+        totalCapacity: '3',
+        eventLocation: 'Banani, Dhaka',
+        eventTags: 'startup,networking',
+        thumbnailImage: '17.jpg',
+      },
+    },
   })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
@@ -99,7 +111,19 @@ export class EventsController {
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
     description: 'The event has been successfully updated.',
-    type: EventResponseDto,
+    schema: {
+      example: {
+        id: 5,
+        title: 'Title of the Event',
+        description: 'Tech entrepreneurs meetup in Banani',
+        eventStartDate: '2025-04-01T18:00:00Z',
+        eventEndDate: '2025-06-01T21:00:00Z',
+        totalCapacity: '3',
+        eventLocation: 'Banani, Dhaka',
+        eventTags: 'startup,networking',
+        thumbnailImage: '5.jpg',
+      },
+    },
   })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
