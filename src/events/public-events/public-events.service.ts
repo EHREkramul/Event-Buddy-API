@@ -5,6 +5,7 @@ import { Booking } from 'src/entities/booking.entity';
 import { Event } from 'src/entities/event.entity';
 import { Repository, LessThan, MoreThan, Not } from 'typeorm';
 import { individualEventResponseDto } from './dto/individual-event-response.dto';
+import { SearchEventDto } from './dto/search-event.dto';
 
 @Injectable()
 export class PublicEventsService {
@@ -64,6 +65,26 @@ export class PublicEventsService {
 
     // Map event to response DTO with availableSeats
     return this.mapEventToResponseDtoWithAvailableSeats(event, availableSeats);
+  }
+
+  async searchEvents(searchDto: SearchEventDto): Promise<Event[]> {
+    const { search } = searchDto;
+
+    const query = this.eventsRepository.createQueryBuilder('event');
+
+    query.where(
+      `event.title ILIKE :search 
+    OR event.description ILIKE :search 
+    OR event.eventLocation ILIKE :search 
+    OR event.eventTags ILIKE :search`,
+      { search: `%${search}%` },
+    );
+
+    query.orderBy('event.eventStartDate', 'ASC');
+
+    const events = await query.getMany();
+
+    return events;
   }
 
   //---------------- Helper methods ----------------

@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { PublicEventsService } from './public-events.service';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { SearchEventDto } from './dto/search-event.dto';
 
 @ApiTags('Public API - Events')
 @Controller('public-events')
@@ -44,5 +45,31 @@ export class PublicEventsController {
   })
   async getEventDetails(@Param('id', ParseIntPipe) id: number) {
     return this.publicEventsService.getEventDetails(id);
+  }
+
+  @Public()
+  @Get('searchEvent')
+  @ApiOperation({
+    summary:
+      'Search events by a single term matching title, description, location, or tags',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of events matching the search term',
+  })
+  async searchEvents(@Query() searchDto: SearchEventDto) {
+    const events = await this.publicEventsService.searchEvents(searchDto);
+
+    if (events.length === 0) {
+      return {
+        message: 'No events found matching your search term.',
+        data: [],
+      };
+    }
+
+    return {
+      message: `${events.length} event(s) found.`,
+      data: events,
+    };
   }
 }
