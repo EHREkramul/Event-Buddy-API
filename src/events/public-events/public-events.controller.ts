@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { PublicEventsService } from './public-events.service';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { SearchEventDto } from './dto/search-event.dto';
+import { IndividualEventResponseDto } from './dto/individual-event-response.dto';
 
 @ApiTags('Public API - Events')
 @Controller('public-events')
@@ -10,7 +11,7 @@ export class PublicEventsController {
   constructor(private readonly publicEventsService: PublicEventsService) {}
 
   @Public()
-  @Get('getUpcomingEvents')
+  @Get('get-upcoming-events')
   @ApiOperation({ summary: 'Get a list of upcoming events' })
   @ApiResponse({
     status: 200,
@@ -21,7 +22,7 @@ export class PublicEventsController {
   }
 
   @Public()
-  @Get('getPreviousEvents')
+  @Get('get-previous-events')
   @ApiOperation({ summary: 'Get a list of previous events' })
   @ApiResponse({
     status: 200,
@@ -32,7 +33,7 @@ export class PublicEventsController {
   }
 
   @Public()
-  @Get('getIndividualEvent/:id')
+  @Get('get-individual-event/:id')
   @ApiOperation({ summary: 'Get full details of an individual event' })
   @ApiParam({
     name: 'id',
@@ -41,6 +42,7 @@ export class PublicEventsController {
   })
   @ApiResponse({
     status: 200,
+    type: IndividualEventResponseDto,
     description: 'Successfully retrieved event details.',
   })
   async getEventDetails(@Param('id', ParseIntPipe) id: number) {
@@ -48,7 +50,7 @@ export class PublicEventsController {
   }
 
   @Public()
-  @Get('searchEvent')
+  @Get('search-event')
   @ApiOperation({
     summary:
       'Search events by a single term matching title, description, location, or tags',

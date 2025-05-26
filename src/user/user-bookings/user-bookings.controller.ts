@@ -30,13 +30,12 @@ export class UserBookingsController {
   constructor(private readonly userBookingsService: UserBookingsService) {}
 
   @Roles(UsersRole.USER)
-  @Post('bookEvent')
+  @Post('book-event')
   @ApiOperation({ summary: 'Book seat(s) for an event' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Seats successfully booked.',
   })
-  @ApiBearerAuth()
   @ApiForbiddenResponse({
     description: 'Forbidden. Only users can book events.',
   })
@@ -70,12 +69,11 @@ export class UserBookingsController {
     );
   }
 
-  @Get('getUserBookings')
+  @Get('get-user-bookings')
   @Roles(UsersRole.USER)
   @ApiForbiddenResponse({
     description: 'Forbidden. Only users can view their bookings.',
   })
-  @ApiBearerAuth()
   @ApiOperation({ summary: "View user's booked events" })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -91,12 +89,15 @@ export class UserBookingsController {
   }
 
   @Roles(UsersRole.USER)
-  @Delete('cancelBooking/:id')
+  @Delete('cancel-booking/:id')
   @ApiOperation({ summary: 'Cancel your booking by ID' })
   @ApiParam({
     name: 'id',
     type: Number,
     description: 'ID of the booking to cancel',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden. Only users can cancel their bookings.',
   })
   @ApiResponse({ status: 200, description: 'Booking cancelled successfully' })
   @ApiResponse({

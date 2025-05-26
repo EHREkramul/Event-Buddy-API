@@ -4,7 +4,7 @@ import { EventResponseDto } from 'src/admin/events/dto/event-response.dto';
 import { Booking } from 'src/entities/booking.entity';
 import { Event } from 'src/entities/event.entity';
 import { Repository, LessThan, MoreThan, Not } from 'typeorm';
-import { individualEventResponseDto } from './dto/individual-event-response.dto';
+import { IndividualEventResponseDto } from './dto/individual-event-response.dto';
 import { SearchEventDto } from './dto/search-event.dto';
 
 @Injectable()
@@ -91,8 +91,8 @@ export class PublicEventsService {
   private mapEventToResponseDtoWithAvailableSeats(
     event: Event,
     availableSeats: number,
-  ): individualEventResponseDto {
-    const responseDto = new individualEventResponseDto();
+  ): IndividualEventResponseDto {
+    const responseDto = new IndividualEventResponseDto();
     responseDto.id = event.id;
     responseDto.title = event.title;
     responseDto.description = event.description;

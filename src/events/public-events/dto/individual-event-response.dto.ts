@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class individualEventResponseDto {
+export class IndividualEventResponseDto {
   @ApiProperty({ example: 1, description: 'Unique identifier for the event' })
   id: number;
 

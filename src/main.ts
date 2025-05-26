@@ -7,7 +7,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Event Buddy API')
-    .setDescription('API documentation for the Event Booking System')
+    .setDescription(
+      'API documentation for the backend system of a simplified event booking system called Event Buddy.',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();

@@ -47,7 +47,7 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Roles(UsersRole.ADMIN)
-  @Post('createNewEvent')
+  @Post('create-new-event')
   @ApiOperation({ summary: 'Create a new event' })
   @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({
@@ -94,7 +94,7 @@ export class EventsController {
   }
 
   @Roles(UsersRole.ADMIN)
-  @Patch('updateEvent/:id')
+  @Patch('update-event/:id')
   @ApiOperation({ summary: 'Edit an existing event by ID' })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
@@ -146,7 +146,7 @@ export class EventsController {
   }
 
   @Roles(UsersRole.ADMIN)
-  @Delete('deleteEvent/:id')
+  @Delete('delete-event/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete an event by ID' })
   @ApiOkResponse({
@@ -177,7 +177,7 @@ export class EventsController {
   }
 
   @Roles(UsersRole.ADMIN)
-  @Get('getAllEvents')
+  @Get('get-all-events')
   @ApiOperation({
     summary: 'Get all events (Admin Dashboard View)',
     description: 'Retrieves a list of all events for administrative purposes.',
