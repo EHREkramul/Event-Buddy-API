@@ -67,7 +67,7 @@ export class AuthController {
         summary: 'Valid login',
         value: {
           email: 'user@example.com',
-          password: 'StrongPass123!"',
+          password: 'StrongPass123!',
         },
       },
     },

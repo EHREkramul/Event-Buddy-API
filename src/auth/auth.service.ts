@@ -8,6 +8,7 @@ import { ConfigType } from '@nestjs/config';
 import { LoginResponseDto } from './dto/login-response.dto';
 import * as argon2 from 'argon2';
 import { RefreshTokenResponseDto } from './dto/refresh-token-response.dto';
+import { CurrentUser } from './types/current-user';
 
 @Injectable()
 export class AuthService {
@@ -101,5 +102,17 @@ export class AuthService {
       throw new UnauthorizedException('Invalid Refresh Token');
 
     return { id: user.id };
+  }
+
+  async validateJwtUser(userId: number) {
+    const userResponseDto = await this.userService.findOne(userId);
+
+    if (!userResponseDto) throw new UnauthorizedException(`User not found`);
+
+    const currentUser: CurrentUser = {
+      id: userResponseDto.id,
+      role: userResponseDto.role,
+    };
+    return currentUser;
   }
 }

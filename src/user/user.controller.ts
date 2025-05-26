@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Request,
+  SetMetadata,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import {
@@ -8,12 +14,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UsersRole } from 'src/auth/enums/user-role.enum';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 
 @Controller('user')
 @ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(UsersRole.ADMIN)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   @ApiBearerAuth()

@@ -9,7 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserRole } from 'src/auth/enums/user-role.enum';
+import { UsersRole } from 'src/auth/enums/user-role.enum';
 import { Event } from './event.entity';
 import { Booking } from './booking.entity';
 
@@ -28,8 +28,8 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  role: UserRole;
+  @Column({ type: 'enum', enum: UsersRole, default: UsersRole.USER })
+  role: UsersRole;
 
   @Column({ type: 'varchar', length: 300, nullable: true })
   refreshToken?: string; // Store the hashed refreshToken

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from 'src/auth/enums/user-role.enum';
+import { UsersRole } from 'src/auth/enums/user-role.enum';
 import { Expose } from 'class-transformer';
 
 export class UserResponseDto {
@@ -16,12 +16,12 @@ export class UserResponseDto {
   email: string;
 
   @ApiProperty({
-    example: UserRole.USER,
-    enum: UserRole,
+    example: UsersRole.USER,
+    enum: UsersRole,
     description: 'Role of the user',
   })
   @Expose()
-  role: UserRole;
+  role: UsersRole;
 
   @ApiProperty({
     example: '2025-05-26T09:03:10.134Z',
