@@ -14,6 +14,7 @@ import { Event } from 'src/entities/event.entity';
 import { EventResponseDto } from './dto/event-response.dto';
 import { promises as fs } from 'fs';
 import { join, extname } from 'path';
+import { Booking } from 'src/entities/booking.entity';
 
 @Injectable()
 export class EventsService {
@@ -22,6 +23,8 @@ export class EventsService {
     private readonly eventRepository: Repository<Event>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Booking)
+    private readonly bookingRepository: Repository<Booking>,
   ) {}
 
   async createEvent(
@@ -227,7 +230,28 @@ export class EventsService {
         createdAt: 'DESC',
       },
     });
-    return events.map((event) => this.mapEventToResponseDto(event));
+
+    // For each event, get sum of seatsBooked from Booking table
+    const eventIds = events.map((e) => e.id);
+
+    // Fetch sums in a single query
+    const bookings = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .select('booking.eventId', 'eventId')
+      .addSelect('SUM(booking.seatsBooked)', 'bookedCount')
+      .where('booking.eventId IN (:...eventIds)', { eventIds })
+      .groupBy('booking.eventId')
+      .getRawMany();
+
+    // Convert to map for faster lookup
+    const bookedCountMap = new Map<number, number>();
+    bookings.forEach((b) => bookedCountMap.set(+b.eventId, +b.bookedCount));
+
+    // Map events to response DTOs with bookedCount
+    return events.map((event) => {
+      const bookedCount = bookedCountMap.get(event.id) || 0;
+      return this.mapEventToResponseDtoWithBookedCount(event, bookedCount);
+    });
   }
 
   //-------------------------- Helper Methods --------------------------
@@ -242,6 +266,24 @@ export class EventsService {
     responseDto.eventLocation = event.eventLocation;
     responseDto.eventTags = event.eventTags;
     responseDto.thumbnailImage = event.thumbnailImage;
+    return responseDto;
+  }
+
+  private mapEventToResponseDtoWithBookedCount(
+    event: Event,
+    bookedCount: number,
+  ): EventResponseDto {
+    const responseDto = new EventResponseDto();
+    responseDto.id = event.id;
+    responseDto.title = event.title;
+    responseDto.description = event.description;
+    responseDto.eventStartDate = event.eventStartDate;
+    responseDto.eventEndDate = event.eventEndDate;
+    responseDto.totalCapacity = event.totalCapacity;
+    responseDto.eventLocation = event.eventLocation;
+    responseDto.eventTags = event.eventTags;
+    responseDto.thumbnailImage = event.thumbnailImage;
+    responseDto.bookedCount = bookedCount;
     return responseDto;
   }
 }

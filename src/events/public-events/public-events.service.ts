@@ -41,6 +41,7 @@ export class PublicEventsService {
     if (!event) {
       throw new NotFoundException(`Event with ID ${id} not found`);
     }
+
     return event;
   }
 }

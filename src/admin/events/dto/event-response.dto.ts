@@ -61,4 +61,10 @@ export class EventResponseDto {
     nullable: true,
   })
   thumbnailImage?: string;
+
+  @ApiProperty({
+    description: 'Number of seat booked for the event.',
+    example: 5,
+  })
+  bookedCount: number;
 }
