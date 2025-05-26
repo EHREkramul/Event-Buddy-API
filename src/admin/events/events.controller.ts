@@ -41,7 +41,8 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 
 @Controller('events')
-@ApiTags('Admin-(Authenticated Admin)')
+@ApiBearerAuth()
+@ApiTags('Admin-(Authenticated) Events Management')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
