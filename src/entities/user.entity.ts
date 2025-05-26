@@ -32,7 +32,7 @@ export class User {
   role: UserRole;
 
   @Column({ type: 'varchar', length: 300, nullable: true })
-  refreshToken?: string;
+  refreshToken?: string; // Store the hashed refreshToken
 
   @CreateDateColumn()
   createdAt: Date;

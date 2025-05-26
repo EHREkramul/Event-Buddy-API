@@ -1,9 +1,16 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserResponseDto } from './dto/user-response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -11,7 +18,7 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const existing = await this.userRepository.findOneBy({
       email: createUserDto.email,
     });
@@ -21,8 +28,11 @@ export class UserService {
     }
 
     const user = this.userRepository.create(createUserDto);
+    const savedUser = await this.userRepository.save(user);
 
-    return this.userRepository.save(user);
+    return plainToInstance(UserResponseDto, savedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
@@ -31,19 +41,43 @@ export class UserService {
     });
   }
 
-  // findAll() {
-  //   return `This action returns all user`;
-  // }
+  async findOne(id: number): Promise<UserResponseDto> {
+    const user = await this.userRepository.findOne({ where: { id } });
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  // ----------------- Helper Methods -----------------
+  async updateLastLogin(id: number) {
+    await this.userRepository.update(id, { lastLoginAt: new Date() });
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async updateHashedRefreshToken(userId: number, hashedRefreshToken) {
+    return await this.userRepository.update(
+      { id: userId },
+      { refreshToken: hashedRefreshToken },
+    );
+  }
+
+  async getUserRefreshTokenFromDB(id: number) {
+    if (!id) {
+      throw new BadRequestException(`Id is required`);
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: ['id', 'refreshToken'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
+  }
 }
