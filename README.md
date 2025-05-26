@@ -78,8 +78,8 @@ ehrekramul-event-buddy-api/
 │   └── uploads/
 │       └── event-images/
 └── src/
-    ├── app.module.ts
     ├── app.controller.ts
+    ├── app.module.ts
     ├── app.service.ts
     ├── main.ts
     ├── admin/
@@ -110,13 +110,10 @@ ehrekramul-event-buddy-api/
     │   │   └── user-role.enum.ts
     │   ├── guards/
     │   │   ├── jwt-auth/
-    │   │   │   ├── jwt-auth.guard.spec.ts
     │   │   │   └── jwt-auth.guard.ts
     │   │   ├── local-auth/
-    │   │   │   ├── local-auth.guard.spec.ts
     │   │   │   └── local-auth.guard.ts
     │   │   ├── refresh-auth/
-    │   │   │   ├── refresh-auth.guard.spec.ts
     │   │   │   └── refresh-auth.guard.ts
     │   │   └── roles/
     │   │       └── roles.guard.ts
