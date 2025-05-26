@@ -40,7 +40,7 @@ CREATE DATABASE event_buddy;
 
     # JWT configuration for access token
     JWT_SECRET=63fe41dfa7bb8dd40f1b8b38700a1bb4fbaaa85c92be4f0e85061e7057962cdd
-    JWT_EXPIRES_IN=20s
+    JWT_EXPIRES_IN=1h
 
     # JWT configuration for refresh token
     JWT_REFRESH_SECRET=fbad649edd3a5e401032f594ffb69334e3d7ce092cd6240193c980a52d318e29
