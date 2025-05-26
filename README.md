@@ -16,6 +16,10 @@ npm install --save @nestjs/typeorm typeorm pg
 npm install bcrypt
 npm install --save-dev @types/bcrypt
 npm i @nestjs/config
+npm install --save @nestjs/passport passport passport-local
+npm install --save-dev @types/passport-local
+npm i @nestjs/jwt passport-jwt
+npm i -D @types/passport-jwt
 ```
 
 ## Database Setup
@@ -31,6 +35,10 @@ CREATE DATABASE event_buddy;
     db_name=event_buddy
     db_port=5432
     db_user=postgres
+
+    # JWT configuration for access token
+    JWT_SECRET=63fe41dfa7bb8dd40f1b8b38700a1bb4fbaaa85c92be4f0e85061e7057962cdd
+    JWT_EXPIRES_IN=1d
 ```
 
 ## Compile and run the project
