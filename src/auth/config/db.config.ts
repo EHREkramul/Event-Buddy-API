@@ -8,7 +8,7 @@ export default (): PostgresConnectionOptions => ({
   username: process.env.db_user,
   password: process.env.db_password,
   database: process.env.db_name,
-  entities: [path.resolve(__dirname, '..') + '/**/*.entity{.ts,.js}'],
+  entities: [path.resolve(__dirname, '../..') + '/**/*.entity{.ts,.js}'],
   synchronize: true,
   // dropSchema: true, // ALERT!!! This option will drop all tables and recreate them every time you start the application. Use it only for development. Delete all data.
 });

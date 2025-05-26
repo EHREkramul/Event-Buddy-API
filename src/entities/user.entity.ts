@@ -57,7 +57,7 @@ export class User {
     this.email = this.email.toLowerCase();
   }
 
-  @BeforeInsert()
+  @BeforeInsert() // Initcap the name of user
   normalizeFullName() {
     if (this.fullName) {
       this.fullName = this.fullName
