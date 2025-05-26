@@ -26,6 +26,7 @@ import { RefreshTokenResponseDto } from './dto/refresh-token-response.dto';
 import { UserResponseDto } from 'src/user/dto/user-response.dto';
 import { Public } from './decorators/public.decorator';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -35,7 +36,6 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @ApiTags('Auth-Public')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({
     status: 201,
@@ -54,7 +54,6 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @ApiTags('Auth-Public')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
@@ -93,7 +92,6 @@ export class AuthController {
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiTags('Auth-Public')
   @ApiOperation({
     summary: 'Refresh access token',
     description: 'Refreshes the access token using a valid refresh token.',
@@ -107,16 +105,14 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized - invalid or missing refresh token.',
   })
-  @ApiBearerAuth()
   async refreshToken(@Request() req: any) {
     return this.authService.refreshToken(req.user.id);
   }
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @ApiTags('Auth-Authenticated')
   @ApiOperation({
-    summary: 'Logout user',
+    summary: 'Logout user (Authenticated)',
     description: 'Logs the user out and invalidates the current refresh token.',
   })
   @ApiResponse({

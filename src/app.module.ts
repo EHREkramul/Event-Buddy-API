@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { EventsModule } from './admin/events/events.module';
+import { PublicEventsModule } from './events/public-events/public-events.module';
 import dbConfig from './auth/config/db.config';
 
 @Module({
@@ -19,6 +21,8 @@ import dbConfig from './auth/config/db.config';
     }),
     UserModule,
     AuthModule,
+    EventsModule,
+    PublicEventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

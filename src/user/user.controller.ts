@@ -5,11 +5,12 @@ import {
   ApiOperation,
   ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('user')
-@ApiTags('User')
+@ApiTags('User (Authenticated)')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -24,7 +25,9 @@ export class UserController {
     type: UserResponseDto,
     description: 'User profile retrieved successfully',
   })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized: Missing or invalid access token.',
+  })
   async getProfile(@Request() req): Promise<UserResponseDto> {
     return this.userService.findOne(req.user.id);
   }

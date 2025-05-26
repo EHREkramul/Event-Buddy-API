@@ -23,7 +23,10 @@ export class Event {
   description: string;
 
   @Column({ type: 'timestamp' })
-  eventDate: Date;
+  eventStartDate: Date;
+
+  @Column({ type: 'timestamp' })
+  eventEndDate: Date;
 
   @Column({ type: 'int' })
   totalCapacity: number;
