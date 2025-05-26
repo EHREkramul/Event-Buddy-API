@@ -2,7 +2,8 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  InternalServerErrorException, // Import for file operation errors
+  InternalServerErrorException,
+  BadRequestException, // Import for file operation errors
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
@@ -23,28 +24,34 @@ export class EventsService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  // Helper method to map an Event entity to EventResponseDto
-  private mapEventToResponseDto(event: Event): EventResponseDto {
-    const responseDto = new EventResponseDto();
-    responseDto.id = event.id;
-    responseDto.title = event.title;
-    responseDto.description = event.description;
-    responseDto.eventStartDate = event.eventStartDate;
-    responseDto.eventEndDate = event.eventEndDate;
-    responseDto.totalCapacity = event.totalCapacity;
-    responseDto.eventLocation = event.eventLocation;
-    responseDto.eventTags = event.eventTags;
-    responseDto.thumbnailImage = event.thumbnailImage;
-    return responseDto;
-  }
-
   async createEvent(
-    dto: CreateEventDto,
+    createeventDto: CreateEventDto,
     userId: number,
     file?: Express.Multer.File,
-  ): Promise<EventResponseDto> {
+  ) {
+    // Check if enddate is before or equal to start date
+    if (
+      createeventDto.eventEndDate &&
+      createeventDto.eventStartDate &&
+      createeventDto.eventEndDate <= createeventDto.eventStartDate
+    ) {
+      throw new BadRequestException(
+        'Event end date must be after the start date.',
+      );
+    }
+
+    // Check if event tags contains other than small letters and commas
+    if (
+      createeventDto.eventTags &&
+      !/^[a-z,]+$/.test(createeventDto.eventTags)
+    ) {
+      throw new BadRequestException(
+        'Event tags must contain only small letters and commas.',
+      );
+    }
+
     const event = this.eventRepository.create({
-      ...dto,
+      ...createeventDto,
       createdBy: { id: userId },
     });
 
@@ -59,9 +66,7 @@ export class EventsService {
       try {
         await fs.rename(oldPath, newPath);
       } catch (error) {
-        throw new InternalServerErrorException(
-          `Failed to save event image: ${error.message}`,
-        );
+        throw new InternalServerErrorException(`Failed to save event image`);
       }
 
       savedEvent.thumbnailImage = newFileName;
@@ -72,21 +77,19 @@ export class EventsService {
   }
 
   async updateEvent(
-    id: number,
-    dto: UpdateEventDto,
-    userId: number,
+    eventId: number,
+    updateEventDto: UpdateEventDto,
     file?: Express.Multer.File,
-  ): Promise<EventResponseDto> {
+  ) {
     let event = await this.eventRepository.findOne({
-      where: { id },
-      relations: ['createdBy'],
+      where: { id: eventId },
     });
 
     if (!event) {
-      throw new NotFoundException(`Event with ID ${id} not found.`);
+      throw new NotFoundException(`Event with ID ${eventId} not found.`);
     }
 
-    Object.assign(event, dto);
+    Object.assign(event, updateEventDto);
 
     if (file) {
       if (event.thumbnailImage) {
@@ -127,14 +130,13 @@ export class EventsService {
     return this.mapEventToResponseDto(updatedEvent);
   }
 
-  async deleteEvent(id: number): Promise<boolean> {
+  async deleteEvent(eventId: number) {
     const event = await this.eventRepository.findOne({
-      where: { id },
-      relations: ['createdBy'],
+      where: { id: eventId },
     });
 
     if (!event) {
-      return false;
+      throw new NotFoundException(`Event with ID ${eventId} not found.`);
     }
 
     if (event.thumbnailImage) {
@@ -147,17 +149,17 @@ export class EventsService {
       } catch (error) {
         if (error.code !== 'ENOENT') {
           throw new InternalServerErrorException(
-            `Failed to delete event image: ${error.message}`,
+            `Failed to delete event image`,
           );
         }
       }
     }
 
-    const result = await this.eventRepository.delete(id);
+    const result = await this.eventRepository.delete(eventId);
     return !!result.affected && result.affected > 0;
   }
 
-  async findAllEvents(): Promise<EventResponseDto[]> {
+  async findAllEvents() {
     const events = await this.eventRepository.find({
       order: {
         eventStartDate: 'ASC',
@@ -165,5 +167,20 @@ export class EventsService {
       },
     });
     return events.map((event) => this.mapEventToResponseDto(event));
+  }
+
+  //-------------------------- Helper Methods --------------------------
+  private mapEventToResponseDto(event: Event): EventResponseDto {
+    const responseDto = new EventResponseDto();
+    responseDto.id = event.id;
+    responseDto.title = event.title;
+    responseDto.description = event.description;
+    responseDto.eventStartDate = event.eventStartDate;
+    responseDto.eventEndDate = event.eventEndDate;
+    responseDto.totalCapacity = event.totalCapacity;
+    responseDto.eventLocation = event.eventLocation;
+    responseDto.eventTags = event.eventTags;
+    responseDto.thumbnailImage = event.thumbnailImage;
+    return responseDto;
   }
 }

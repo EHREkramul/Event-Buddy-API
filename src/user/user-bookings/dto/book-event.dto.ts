@@ -4,10 +4,10 @@ import { IsInt, Min, Max, IsNotEmpty } from 'class-validator';
 export class BookEventDto {
   @ApiProperty({
     description: 'The ID of the event to book',
-    example: 1,
+    example: 5,
   })
-  @IsInt({ message: 'Event ID must be an integer.' })
-  @IsNotEmpty({ message: 'Event ID is required.' })
+  @IsInt()
+  @IsNotEmpty()
   eventId: number;
 
   @ApiProperty({
@@ -16,9 +16,9 @@ export class BookEventDto {
     minimum: 1,
     maximum: 4,
   })
-  @IsInt({ message: 'Number of seats must be an integer.' })
+  @IsInt()
   @Min(1, { message: 'Minimum 1 seat can be booked.' })
   @Max(4, { message: 'Maximum 4 seats can be booked per booking.' })
-  @IsNotEmpty({ message: 'Number of seats is required.' })
+  @IsNotEmpty()
   seatsBooked: number;
 }

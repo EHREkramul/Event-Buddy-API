@@ -42,13 +42,11 @@ import { extname } from 'path';
 
 @Controller('events')
 @ApiTags('Admin-(Authenticated Admin)')
-@ApiBearerAuth()
-@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })) // Apply ValidationPipe at controller level
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Roles(UsersRole.ADMIN)
-  @Post('create')
+  @Post('createNewEvent')
   @ApiOperation({ summary: 'Create a new event' })
   @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({
@@ -56,17 +54,14 @@ export class EventsController {
     type: EventResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized: Missing or invalid access token.',
+    description: 'Unauthorized',
   })
   @ApiForbiddenResponse({
     description:
       'Forbidden: You do not have permission to access this resource.',
   })
   @ApiBadRequestResponse({
-    description: 'Bad Request: Invalid input data. Check your DTO.',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error: Failed to save event image.',
+    description: 'Bad Request: Invalid input data',
   })
   @UseInterceptors(
     FileInterceptor('thumbnailImage', {
@@ -90,15 +85,15 @@ export class EventsController {
     }),
   )
   async createEvent(
-    @Body() dto: CreateEventDto,
+    @Body(ValidationPipe) createeventDto: CreateEventDto,
     @Request() req: any,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<EventResponseDto> {
-    return this.eventsService.createEvent(dto, req.user.id, file);
+  ) {
+    return this.eventsService.createEvent(createeventDto, req.user.id, file);
   }
 
   @Roles(UsersRole.ADMIN)
-  @Patch('update/:id')
+  @Patch('updateEvent/:id')
   @ApiOperation({ summary: 'Edit an existing event by ID' })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
@@ -106,18 +101,14 @@ export class EventsController {
     type: EventResponseDto,
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized: Missing or invalid access token.',
+    description: 'Unauthorized',
   })
   @ApiForbiddenResponse({
     description:
       'Forbidden: You do not have permission to access this resource.',
   })
-  @ApiNotFoundResponse({ description: 'Event not found.' })
   @ApiBadRequestResponse({
-    description: 'Bad Request: Invalid input data. Check your DTO.',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error: Failed to update event image.',
+    description: 'Bad Request',
   })
   @UseInterceptors(
     FileInterceptor('thumbnailImage', {
@@ -141,22 +132,20 @@ export class EventsController {
     }),
   )
   async updateEvent(
-    @Param('id', ParseIntPipe) id: number, // Corrected parameter name
-    @Body() dto: UpdateEventDto,
-    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEventDto: UpdateEventDto,
     @UploadedFile() file?: Express.Multer.File,
-  ): Promise<EventResponseDto> {
+  ) {
     const updatedEvent = await this.eventsService.updateEvent(
-      +id,
-      dto,
-      req.user.id,
+      id,
+      updateEventDto,
       file,
     );
     return updatedEvent;
   }
 
   @Roles(UsersRole.ADMIN)
-  @Delete('delete/:id')
+  @Delete('deleteEvent/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Delete an event by ID' })
   @ApiOkResponse({
@@ -168,18 +157,15 @@ export class EventsController {
     },
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized: Missing or invalid access token.',
+    description: 'Unauthorized',
   })
   @ApiForbiddenResponse({
     description:
       'Forbidden: You do not have permission to access this resource.',
   })
-  @ApiNotFoundResponse({ description: 'Event not found.' })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal Server Error: Failed to delete event image.',
-  })
   async deleteEvent(@Param('id', ParseIntPipe) id: number) {
-    const deleted = await this.eventsService.deleteEvent(+id);
+    const deleted = await this.eventsService.deleteEvent(id);
+
     if (!deleted) {
       throw new NotFoundException(`Event with ID ${id} not found.`);
     } else {
@@ -200,13 +186,13 @@ export class EventsController {
     type: [EventResponseDto],
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized: Missing or invalid access token.',
+    description: 'Unauthorized',
   })
   @ApiForbiddenResponse({
     description:
       'Forbidden: You do not have permission to access this resource.',
   })
-  async getAllEvents(): Promise<EventResponseDto[]> {
+  async getAllEvents() {
     return this.eventsService.findAllEvents();
   }
 }

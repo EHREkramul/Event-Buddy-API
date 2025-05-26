@@ -9,14 +9,14 @@ export class EventResponseDto {
 
   @ApiProperty({
     description: 'The title of the event.',
-    example: 'NestJS Global Summit 2025',
+    example: 'Deans Award Ceremony',
   })
   title: string;
 
   @ApiProperty({
     description: 'A detailed description of the event.',
     example:
-      'Join us for the annual NestJS Global Summit, bringing together developers from around the world to share knowledge and experiences with the NestJS framework.',
+      'Join us for the annual Deans Award Ceremony, celebrating the achievements of our students and faculty.',
   })
   description: string;
 
@@ -43,20 +43,20 @@ export class EventResponseDto {
   totalCapacity: number;
 
   @ApiProperty({
-    description: 'The physical or virtual location of the event.',
-    example: 'Virtual Conference Center / New York City, NY',
+    description: 'The Location of the event.',
+    example: 'New York City, NY',
   })
   eventLocation: string;
 
   @ApiProperty({
-    description: 'Comma-separated tags for the event (optional).',
+    description: 'Comma-separated tags for the event.',
     example: 'nestjs,backend,workshop',
     nullable: true,
   })
   eventTags?: string;
 
   @ApiProperty({
-    description: 'The filename of the thumbnail image (optional).',
+    description: 'The filename of the thumbnail image.',
     example: '7.jpg',
     nullable: true,
   })
