@@ -23,7 +23,7 @@ import { BookEventDto } from './dto/book-event.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UsersRole } from 'src/auth/enums/user-role.enum';
 
-@ApiTags('User (Authenticated)-Bookings')
+@ApiTags('User (Authenticated) - Bookings')
 @ApiBearerAuth()
 @Controller('user-bookings')
 export class UserBookingsController {

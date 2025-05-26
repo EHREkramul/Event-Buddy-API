@@ -42,7 +42,7 @@ import { extname } from 'path';
 
 @Controller('events')
 @ApiBearerAuth()
-@ApiTags('Admin-(Authenticated) Events Management')
+@ApiTags('Admin (Authenticated) - Events Management')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
