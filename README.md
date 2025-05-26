@@ -21,6 +21,7 @@ npm install --save-dev @types/passport-local
 npm i @nestjs/jwt passport-jwt
 npm i -D @types/passport-jwt
 npm i argon2
+npm install --save-dev @types/express @types/multer
 ```
 
 ## Database Setup
