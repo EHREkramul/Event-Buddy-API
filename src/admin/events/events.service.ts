@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { Event } from 'src/entities/event.entity';
@@ -29,6 +29,16 @@ export class EventsService {
     userId: number,
     file?: Express.Multer.File,
   ) {
+    // check if totalCapacity is a valid number and greater than 0
+    if (
+      createeventDto.totalCapacity &&
+      (isNaN(createeventDto.totalCapacity) || createeventDto.totalCapacity <= 0)
+    ) {
+      throw new BadRequestException(
+        'Total capacity must be a valid number greater than 0.',
+      );
+    }
+
     // Check if enddate is before or equal to start date
     if (
       createeventDto.eventEndDate &&
@@ -47,6 +57,16 @@ export class EventsService {
     ) {
       throw new BadRequestException(
         'Event tags must contain only small letters and commas.',
+      );
+    }
+
+    // Check if event with the same title already exists
+    const existingEvent = await this.eventRepository.findOne({
+      where: { title: createeventDto.title },
+    });
+    if (existingEvent) {
+      throw new ForbiddenException(
+        `Event with title "${createeventDto.title}" already exists.`,
       );
     }
 
@@ -81,6 +101,47 @@ export class EventsService {
     updateEventDto: UpdateEventDto,
     file?: Express.Multer.File,
   ) {
+    // check if totalCapacity is a valid number and greater than 0
+    if (
+      updateEventDto.totalCapacity &&
+      (isNaN(updateEventDto.totalCapacity) || updateEventDto.totalCapacity <= 0)
+    ) {
+      throw new BadRequestException(
+        'Total capacity must be a valid number greater than 0.',
+      );
+    }
+
+    // Check if enddate is before or equal to start date
+    if (
+      updateEventDto.eventEndDate &&
+      updateEventDto.eventStartDate &&
+      updateEventDto.eventEndDate <= updateEventDto.eventStartDate
+    ) {
+      throw new BadRequestException(
+        'Event end date must be after the start date.',
+      );
+    }
+
+    // Check if event tags contains other than small letters and commas
+    if (
+      updateEventDto.eventTags &&
+      !/^[a-z,]+$/.test(updateEventDto.eventTags)
+    ) {
+      throw new BadRequestException(
+        'Event tags must contain only small letters and commas.',
+      );
+    }
+
+    // Check if event with the same title already exists except for the current event
+    const existingEvent = await this.eventRepository.findOne({
+      where: { title: updateEventDto.title, id: Not(eventId) },
+    });
+    if (existingEvent) {
+      throw new ForbiddenException(
+        `Event with title "${updateEventDto.title}" already exists.`,
+      );
+    }
+
     let event = await this.eventRepository.findOne({
       where: { id: eventId },
     });

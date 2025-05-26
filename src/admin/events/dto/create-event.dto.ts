@@ -65,10 +65,7 @@ export class CreateEventDto {
     minimum: 1,
     type: 'integer',
   })
-  @IsInt()
-  @Min(1)
   @IsNotEmpty()
-  @IsPositive()
   totalCapacity: number;
 
   @ApiProperty({

@@ -1,3 +1,9 @@
+# Ignore all files inside the event-images directory
+public/uploads/event-images/*
+
+# Except for readme.md
+!public/uploads/event-images/readme.md
+
 # compiled output
 /dist
 /node_modules
