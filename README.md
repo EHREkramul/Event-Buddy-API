@@ -1,6 +1,5 @@
-# Event Buddy Backend API
-
-[![Nest Logo](https://nestjs.com/img/logo-small.svg)](http://nestjs.com/)
+<h1 align="center">Event Buddy Backend API</h1>
+<h4 align="center">Event management system</h4>
 
 ## Description
 
