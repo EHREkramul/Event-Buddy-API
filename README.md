@@ -6,7 +6,9 @@
 Backend system of a simplified event booking system called Event Buddy. The system provided RESTful APIs for all core functionalities, including event listing, event details, seat booking, authentication, and admin event management.
 
 ## Installation Commands
+
 Ensure you have installed NestJS
+
 ```bash
 # Additional packages used
 npm install @nestjs/swagger
