@@ -1,15 +1,6 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  NotFoundException,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { PublicEventsService } from './public-events.service';
-import { GetEventsDto } from './dto/get-events.dto';
-import { EventDetailsDto } from './dto/event-details.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 
 @ApiTags('Public API - Events')
@@ -24,11 +15,8 @@ export class PublicEventsController {
     status: 200,
     description: 'Successfully retrieved upcoming events.',
   })
-  @ApiResponse({ status: 500, description: 'Internal server error.' })
-  async getUpcomingEvents(@Query(ValidationPipe) paginationDto: GetEventsDto) {
-    const page = paginationDto.page ?? 1;
-    const limit = paginationDto.limit ?? 10;
-    return this.publicEventsService.findUpcomingEvents(page, limit);
+  async getUpcomingEvents() {
+    return this.publicEventsService.findUpcomingEvents();
   }
 
   @Public()
@@ -38,11 +26,8 @@ export class PublicEventsController {
     status: 200,
     description: 'Successfully retrieved previous events.',
   })
-  @ApiResponse({ status: 500, description: 'Internal server error.' })
-  async getPreviousEvents(@Query() paginationDto: GetEventsDto) {
-    const page = paginationDto.page ?? 1;
-    const limit = paginationDto.limit ?? 10;
-    return this.publicEventsService.findPreviousEvents(page, limit);
+  async getPreviousEvents() {
+    return this.publicEventsService.findPreviousEvents();
   }
 
   @Public()
@@ -57,15 +42,7 @@ export class PublicEventsController {
     status: 200,
     description: 'Successfully retrieved event details.',
   })
-  @ApiResponse({ status: 404, description: 'Event not found.' })
-  @ApiResponse({ status: 500, description: 'Internal server error.' })
-  async getEventDetails(@Param() params: EventDetailsDto) {
-    const event = await this.publicEventsService.findEventById(params.id);
-    if (!event) {
-      throw new NotFoundException(
-        'Event not found. Please check the event ID.',
-      );
-    }
-    return event;
+  async getEventDetails(@Param('id', ParseIntPipe) id: number) {
+    return this.publicEventsService.getEventDetails(id);
   }
 }

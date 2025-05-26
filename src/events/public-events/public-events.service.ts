@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from 'src/entities/event.entity';
-import { Repository, LessThan, MoreThan } from 'typeorm';
+import { Repository, LessThan, MoreThan, Not } from 'typeorm';
 
 @Injectable()
 export class PublicEventsService {
@@ -10,41 +10,37 @@ export class PublicEventsService {
     private eventsRepository: Repository<Event>,
   ) {}
 
-  async findUpcomingEvents(page: number, limit: number) {
+  async findUpcomingEvents() {
     const now = new Date();
-    const [events, total] = await this.eventsRepository.findAndCount({
-      where: { eventEndDate: MoreThan(now) },
+    const upcomingEvents = this.eventsRepository.find({
+      where: { eventStartDate: MoreThan(now) },
       order: { eventStartDate: 'ASC' },
-      skip: (page - 1) * limit,
-      take: limit,
     });
-    return {
-      data: events,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+
+    if (!upcomingEvents) {
+      throw new NotFoundException('No upcoming events found');
+    }
+    return upcomingEvents;
   }
 
-  async findPreviousEvents(page: number, limit: number) {
+  async findPreviousEvents() {
     const now = new Date();
-    const [events, total] = await this.eventsRepository.findAndCount({
+    const previousEvents = this.eventsRepository.find({
       where: { eventEndDate: LessThan(now) },
-      order: { eventStartDate: 'DESC' },
-      skip: (page - 1) * limit,
-      take: limit,
+      order: { eventEndDate: 'DESC' },
     });
-    return {
-      data: events,
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    };
+    if (!previousEvents) {
+      throw new NotFoundException('No previous events found');
+    }
+    return previousEvents;
   }
 
-  async findEventById(id: number) {
-    return this.eventsRepository.findOne({ where: { id } });
+  async getEventDetails(id: number) {
+    const event = this.eventsRepository.findOne({ where: { id } });
+
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${id} not found`);
+    }
+    return event;
   }
 }
