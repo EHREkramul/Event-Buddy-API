@@ -6,6 +6,9 @@ import {
   Req,
   HttpStatus,
   ValidationPipe,
+  Delete,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -13,6 +16,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import { UserBookingsService } from './user-bookings.service';
 import { BookEventDto } from './dto/book-event.dto';
@@ -84,5 +88,24 @@ export class UserBookingsController {
   async getUserBookings(@Req() req: any) {
     const userId = req.user.id;
     return this.userBookingsService.findUserBookings(userId);
+  }
+
+  @Roles(UsersRole.USER)
+  @Delete('cancelBooking/:id')
+  @ApiOperation({ summary: 'Cancel your booking by ID' })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'ID of the booking to cancel',
+  })
+  @ApiResponse({ status: 200, description: 'Booking cancelled successfully' })
+  @ApiResponse({
+    status: 404,
+    description: 'Booking not found or unauthorized',
+  })
+  async cancelBooking(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    const userId = req.user.id;
+    await this.userBookingsService.cancelBooking(id, userId);
+    return { message: `Booking with ID ${id} cancelled successfully.` };
   }
 }

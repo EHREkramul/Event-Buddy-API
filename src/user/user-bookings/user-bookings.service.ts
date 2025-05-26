@@ -103,4 +103,23 @@ export class UserBookingsService {
 
     return bookings;
   }
+
+  async cancelBooking(bookingId: number, userId: number): Promise<void> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId },
+      relations: ['user'],
+    });
+
+    if (!booking) {
+      throw new NotFoundException(`Booking with ID ${bookingId} not found`);
+    }
+
+    if (booking.user.id !== userId) {
+      throw new NotFoundException(
+        `You are not authorized to cancel this booking`,
+      );
+    }
+
+    await this.bookingsRepository.remove(booking);
+  }
 }
