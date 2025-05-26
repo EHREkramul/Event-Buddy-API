@@ -21,13 +21,11 @@ import { LoginRequestDto } from './dto/login-request.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 import { UserService } from 'src/user/user.service';
-import { User } from 'src/entities/user.entity';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { RefreshTokenResponseDto } from './dto/refresh-token-response.dto';
 import { UserResponseDto } from 'src/user/dto/user-response.dto';
-import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { Public } from './decorators/public.decorator';
 
-@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -35,7 +33,9 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
+  @Public()
   @Post('register')
+  @ApiTags('Auth-Public')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({
     status: 201,
@@ -52,7 +52,9 @@ export class AuthController {
     return this.userService.createUser(createUserDto);
   }
 
+  @Public()
   @Post('login')
+  @ApiTags('Auth-Public')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @ApiOperation({
@@ -87,9 +89,11 @@ export class AuthController {
     return loginResponseDto;
   }
 
+  @Public()
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @ApiTags('Auth-Public')
   @ApiOperation({
     summary: 'Refresh access token',
     description: 'Refreshes the access token using a valid refresh token.',
@@ -108,9 +112,9 @@ export class AuthController {
     return this.authService.refreshToken(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @ApiTags('Auth-Authenticated')
   @ApiOperation({
     summary: 'Logout user',
     description: 'Logs the user out and invalidates the current refresh token.',
