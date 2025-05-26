@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventResponseDto } from 'src/admin/events/dto/event-response.dto';
+import { Booking } from 'src/entities/booking.entity';
 import { Event } from 'src/entities/event.entity';
 import { Repository, LessThan, MoreThan, Not } from 'typeorm';
+import { individualEventResponseDto } from './dto/individual-event-response.dto';
 
 @Injectable()
 export class PublicEventsService {
   constructor(
     @InjectRepository(Event)
     private eventsRepository: Repository<Event>,
+    @InjectRepository(Booking)
+    private bookingRepository: Repository<Booking>,
   ) {}
 
   async findUpcomingEvents() {
@@ -35,13 +40,48 @@ export class PublicEventsService {
     return previousEvents;
   }
 
-  async getEventDetails(id: number) {
-    const event = this.eventsRepository.findOne({ where: { id } });
+  async getEventDetails(eventId: number) {
+    const event = await this.eventsRepository.findOne({
+      where: { id: eventId },
+    });
 
     if (!event) {
-      throw new NotFoundException(`Event with ID ${id} not found`);
+      throw new NotFoundException(`Event with ID ${eventId} not found`);
     }
 
-    return event;
+    // Fetch sum of seatsBooked for this event
+    const bookingResult = await this.bookingRepository
+      .createQueryBuilder('booking')
+      .select('SUM(booking.seatsBooked)', 'bookedCount')
+      .where('booking.eventId = :eventId', { eventId })
+      .getRawOne();
+
+    const bookedCount = bookingResult?.bookedCount
+      ? +bookingResult.bookedCount
+      : 0;
+
+    const availableSeats = event.totalCapacity - bookedCount;
+
+    // Map event to response DTO with availableSeats
+    return this.mapEventToResponseDtoWithAvailableSeats(event, availableSeats);
+  }
+
+  //---------------- Helper methods ----------------
+  private mapEventToResponseDtoWithAvailableSeats(
+    event: Event,
+    availableSeats: number,
+  ): individualEventResponseDto {
+    const responseDto = new individualEventResponseDto();
+    responseDto.id = event.id;
+    responseDto.title = event.title;
+    responseDto.description = event.description;
+    responseDto.eventStartDate = event.eventStartDate;
+    responseDto.eventEndDate = event.eventEndDate;
+    responseDto.totalCapacity = event.totalCapacity;
+    responseDto.eventLocation = event.eventLocation;
+    responseDto.eventTags = event.eventTags;
+    responseDto.thumbnailImage = event.thumbnailImage;
+    responseDto.availableSeats = availableSeats;
+    return responseDto;
   }
 }
