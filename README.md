@@ -66,3 +66,89 @@ npm run start
 # View Swagger docs (Visit after starting the server)
 http://localhost:46570/api
 ```
+
+## Folder Structure
+
+```bash
+ehrekramul-event-buddy-api/
+├── README.md
+├── public/
+│   └── uploads/
+│       └── event-images/
+└── src/
+    ├── app.module.ts
+    ├── app.controller.ts
+    ├── app.service.ts
+    ├── main.ts
+    ├── admin/
+    │   └── events/
+    │       ├── events.controller.ts
+    │       ├── events.module.ts
+    │       ├── events.service.ts
+    │       └── dto/
+    │           ├── create-event.dto.ts
+    │           ├── event-response.dto.ts
+    │           └── update-event.dto.ts
+    ├── auth/
+    │   ├── auth.controller.ts
+    │   ├── auth.module.ts
+    │   ├── auth.service.ts
+    │   ├── config/
+    │   │   ├── db.config.ts
+    │   │   ├── jwt.config.ts
+    │   │   └── refresh-jwt.config.ts
+    │   ├── decorators/
+    │   │   ├── public.decorator.ts
+    │   │   └── roles.decorator.ts
+    │   ├── dto/
+    │   │   ├── login-request.dto.ts
+    │   │   ├── login-response.dto.ts
+    │   │   └── refresh-token-response.dto.ts
+    │   ├── enums/
+    │   │   └── user-role.enum.ts
+    │   ├── guards/
+    │   │   ├── jwt-auth/
+    │   │   │   ├── jwt-auth.guard.spec.ts
+    │   │   │   └── jwt-auth.guard.ts
+    │   │   ├── local-auth/
+    │   │   │   ├── local-auth.guard.spec.ts
+    │   │   │   └── local-auth.guard.ts
+    │   │   ├── refresh-auth/
+    │   │   │   ├── refresh-auth.guard.spec.ts
+    │   │   │   └── refresh-auth.guard.ts
+    │   │   └── roles/
+    │   │       └── roles.guard.ts
+    │   ├── strategies/
+    │   │   ├── jwt.strategy.ts
+    │   │   ├── local.strategy.ts
+    │   │   └── refresh.strategy.ts
+    │   └── types/
+    │       ├── auth-jwt-payload.d.ts
+    │       └── current-user.d.ts
+    ├── entities/
+    │   ├── booking.entity.ts
+    │   ├── event.entity.ts
+    │   └── user.entity.ts
+    ├── events/
+    │   └── public-events/
+    │       ├── public-events.controller.ts
+    │       ├── public-events.module.ts
+    │       ├── public-events.service.ts
+    │       └── dto/
+    │           ├── individual-event-response.dto.ts
+    │           └── search-event.dto.ts
+    └── user/
+        ├── user.controller.ts
+        ├── user.module.ts
+        ├── user.service.ts
+        ├── dto/
+        │   ├── create-user.dto.ts
+        │   └── user-response.dto.ts
+        └── user-bookings/
+            ├── user-bookings.controller.ts
+            ├── user-bookings.module.ts
+            ├── user-bookings.service.ts
+            └── dto/
+                └── book-event.dto.ts
+
+```
