@@ -3,7 +3,8 @@ import {
   NotFoundException,
   ForbiddenException,
   InternalServerErrorException,
-  BadRequestException, // Import for file operation errors
+  BadRequestException,
+  ConflictException, // Import for file operation errors
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
@@ -68,7 +69,7 @@ export class EventsService {
       where: { title: createeventDto.title },
     });
     if (existingEvent) {
-      throw new ForbiddenException(
+      throw new ConflictException(
         `Event with title "${createeventDto.title}" already exists.`,
       );
     }

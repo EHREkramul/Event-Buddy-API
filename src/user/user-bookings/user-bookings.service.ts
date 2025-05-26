@@ -34,10 +34,13 @@ export class UserBookingsService {
     }
 
     // Check if the event is already running or has ended
-    const now = new Date();
-    if (event.eventEndDate <= now) {
+    const currentDate = new Date();
+    if (
+      event.eventStartDate < currentDate ||
+      event.eventEndDate < currentDate
+    ) {
       throw new BadRequestException(
-        'Cannot book seats for an event that has already ended or running.',
+        'Cannot book seats for an event that has already started or ended.',
       );
     }
 
@@ -61,7 +64,7 @@ export class UserBookingsService {
 
     if (userAlreadyBooked) {
       throw new ConflictException(
-        'You have already booked seats for this event. Only one booking per user per event is allowed. Update your booking instead.',
+        'You have already booked seats for this event. Only one booking per user per event is allowed. Update your booking instead(If available).',
       );
     }
 
@@ -95,7 +98,7 @@ export class UserBookingsService {
 
     // If no bookings found, return an empty array
     if (bookings.length === 0) {
-      return [];
+      throw new NotFoundException('No bookings found for this user.');
     }
 
     return bookings;
